@@ -1,0 +1,369 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fast Food Nutrition India</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f5f3ee; --surface: #fff; --border: #e4dfd3; --text: #1a1714;
+  --muted: #7a7369; --accent: #c8521a; --green: #2a7a3b; --red: #b83232;
+  --th-bg: #efebe3; --row-hover: #faf8f4; --header: #1a1714;
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; min-height: 100vh; }
+
+/* HEADER */
+header { background: var(--header); color: #fff; padding: 1.4rem 2rem 1rem; position: sticky; top: 0; z-index: 200; box-shadow: 0 2px 16px rgba(0,0,0,0.25); }
+.hinner { max-width: 1400px; margin: 0 auto; }
+.htop { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: .75rem; }
+h1 { font-family: 'DM Serif Display', serif; font-size: 1.55rem; font-weight: 400; letter-spacing: -.02em; line-height: 1; }
+h1 span { color: #e8966a; }
+.hmeta { font-size: .68rem; color: rgba(255,255,255,.38); letter-spacing: .06em; text-transform: uppercase; margin-top: .3rem; }
+.stats { display: flex; gap: 1.5rem; }
+.snum { font-size: 1.35rem; font-weight: 300; color: #e8966a; line-height: 1; }
+.slbl { font-size: .62rem; color: rgba(255,255,255,.38); text-transform: uppercase; letter-spacing: .06em; }
+.controls { display: flex; gap: .55rem; flex-wrap: wrap; align-items: center; }
+.sw { position: relative; flex: 1; min-width: 170px; max-width: 280px; }
+.sw svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: .3; pointer-events: none; }
+input[type=text] { width: 100%; padding: .5rem .75rem .5rem 2.1rem; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); border-radius: 7px; color: #fff; font-family: 'DM Sans',sans-serif; font-size: .82rem; outline: none; }
+input::placeholder { color: rgba(255,255,255,.28); }
+input:focus { border-color: rgba(255,255,255,.32); background: rgba(255,255,255,.12); }
+select { padding: .5rem 1.8rem .5rem .7rem; background: rgba(255,255,255,.08) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='5'%3E%3Cpath d='M1 1l3.5 3.5L8 1' stroke='rgba(255,255,255,.4)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 8px center; border: 1px solid rgba(255,255,255,.12); border-radius: 7px; color: #fff; font-family: 'DM Sans',sans-serif; font-size: .82rem; outline: none; appearance: none; cursor: pointer; }
+select option { background: #2a2420; }
+select:focus { border-color: rgba(255,255,255,.32); }
+.pills { display: flex; gap: .4rem; }
+.pill { padding: .4rem .8rem; border-radius: 100px; border: 1px solid rgba(255,255,255,.16); background: transparent; color: rgba(255,255,255,.5); font-family: 'DM Sans',sans-serif; font-size: .78rem; cursor: pointer; transition: all .15s; white-space: nowrap; }
+.pill:hover { color: #fff; border-color: rgba(255,255,255,.35); }
+.pill.active { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.38); color: #fff; }
+
+/* MAIN */
+main { max-width: 1400px; margin: 0 auto; padding: 1.5rem 2rem 3rem; }
+.twrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,.06); overflow-x: auto; }
+
+/* TABLE */
+table { width: 100%; border-collapse: collapse; min-width: 700px; }
+thead { position: sticky; top: 0; z-index: 10; }
+th { background: var(--th-bg); padding: .65rem .9rem; text-align: left; font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .065em; color: var(--muted); border-bottom: 2px solid var(--border); white-space: nowrap; user-select: none; }
+th.sort { cursor: pointer; transition: color .12s, background .12s; }
+th.sort:hover { color: var(--text); background: #e6e0d6; }
+th.active { color: var(--accent) !important; }
+th:nth-child(1) { width: 30px; padding-left: 1rem; padding-right: .4rem; }
+th:nth-child(5), th:nth-child(6), th:nth-child(7), th:nth-child(8) { text-align: right; }
+.si { display: inline-flex; flex-direction: column; gap: 1px; vertical-align: middle; margin-left: 4px; }
+.si svg { display: block; }
+tbody tr { border-bottom: 1px solid var(--border); transition: background .09s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--row-hover); }
+td { padding: .6rem .9rem; vertical-align: middle; font-size: .84rem; }
+td:nth-child(1) { padding-left: 1rem; padding-right: .4rem; }
+td:nth-child(5), td:nth-child(6), td:nth-child(7), td:nth-child(8) { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+
+/* veg dot */
+.vd { width: 14px; height: 14px; border-radius: 3px; display: inline-flex; align-items: center; justify-content: center; }
+.vd.veg { border: 2px solid var(--green); }
+.vd.non-veg { border: 2px solid var(--red); }
+.vd::after { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+.vd.veg::after { background: var(--green); }
+.vd.non-veg::after { background: var(--red); }
+
+/* cells */
+.iname { font-weight: 500; line-height: 1.3; }
+.cc { display: flex; align-items: center; gap: 7px; }
+.cp { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.cl { color: var(--muted); font-size: .82rem; }
+.catb { display: inline-block; padding: .13rem .5rem; background: var(--bg); border: 1px solid var(--border); border-radius: 100px; font-size: .69rem; color: var(--muted); white-space: nowrap; }
+.cal { color: var(--accent); }
+.pro { color: var(--green); }
+.crb { color: #b87a1a; }
+.fat { color: var(--red); }
+.note { font-size: .69rem; color: var(--muted); font-style: italic; }
+
+/* group rows */
+tr.gr td { background: #eee8de; padding: .4rem 1rem; font-size: .69rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); border-bottom: 1px solid var(--border); }
+.gpip { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 7px; vertical-align: middle; }
+
+.empty { text-align: center; padding: 4rem 2rem; color: var(--muted); }
+footer { text-align: center; padding: 1.5rem 2rem; font-size: .7rem; color: var(--muted); border-top: 1px solid var(--border); max-width: 1400px; margin: 0 auto; }
+
+@media(max-width:650px){ header{padding:1rem} main{padding:1rem} .stats{display:none} h1{font-size:1.2rem} }
+</style>
+</head>
+<body>
+<header>
+  <div class="hinner">
+    <div class="htop">
+      <div>
+        <h1>Nutrition <span>India</span></h1>
+        <div class="hmeta">Fast food &amp; restaurant nutrition data</div>
+      </div>
+      <div class="stats">
+        <div><div class="snum" id="ss">â€”</div><div class="slbl">Showing</div></div>
+        <div><div class="snum" id="st">â€”</div><div class="slbl">Total items</div></div>
+        <div><div class="snum" id="sc">â€”</div><div class="slbl">Chains</div></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="sw">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="search" placeholder="Search items, chainsâ€¦" autocomplete="off">
+      </div>
+      <select id="cf"><option value="">All chains</option></select>
+      <select id="catf"><option value="">All categories</option></select>
+      <div class="pills">
+        <button class="pill active" data-t="all">All</button>
+        <button class="pill" data-t="veg">ðŸŸ¢ Veg</button>
+        <button class="pill" data-t="non-veg">ðŸ”´ Non-veg</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="twrap">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th class="sort" data-c="name">Item <span class="si" id="si-name"></span></th>
+          <th class="sort" data-c="chain">Chain <span class="si" id="si-chain"></span></th>
+          <th>Category</th>
+          <th class="sort" data-c="cal" style="text-align:right">Calories <span class="si" id="si-cal"></span></th>
+          <th class="sort" data-c="protein" style="text-align:right">Protein (g) <span class="si" id="si-protein"></span></th>
+          <th class="sort" data-c="carbs" style="text-align:right">Carbs (g) <span class="si" id="si-carbs"></span></th>
+          <th class="sort" data-c="fat" style="text-align:right">Fat (g) <span class="si" id="si-fat"></span></th>
+          <th>Serving note</th>
+        </tr>
+      </thead>
+      <tbody id="tb"></tbody>
+    </table>
+  </div>
+</main>
+
+<footer>
+  Nutrition data sourced from official brand websites, apps &amp; published menus. Values are approximate and may vary by location &amp; preparation. Per serving unless noted.
+</footer>
+
+<script>
+const DATA = [
+  // Official sources used:
+  // McDonald's India product nutrition pages; Burger King India nutritional information chart;
+  // Subway India Nutrition Information PDF; Pizza Hut India nutrition & allergen booklet.
+  { chain:"McDonald's India", color:"#DA291C", items:[
+    {name:"McAloo Tikki",cat:"Burgers",type:"veg",cal:353,protein:8,carbs:50,fat:22,note:"per burger"},
+    {name:"Chicken McGrill",cat:"Burgers",type:"non-veg",cal:282,protein:12,carbs:33,fat:22,note:"per burger"},
+    {name:"Veg Pizza McPuff",cat:"Sides",type:"veg",cal:226,protein:4,carbs:24,fat:22,note:"per piece"},
+    {name:"McEgg",cat:"Burgers",type:"non-veg",cal:281,protein:12,carbs:32,fat:22,note:"per burger"},
+    {name:"Grill Chicken Wrap with Chipotle Sauce",cat:"Wraps",type:"non-veg",cal:638,protein:25,carbs:57,fat:22,note:"per wrap"},
+    {name:"Egg Wrap with Chipotle Sauce",cat:"Wraps",type:"non-veg",cal:310,protein:10,carbs:24,fat:22,note:"per wrap"},
+    {name:"McAloo Wrap with Chipotle Sauce",cat:"Wraps",type:"veg",cal:357,protein:5,carbs:39,fat:22,note:"per wrap"},
+    {name:"Green Chilli Aloo Naan",cat:"Sides",type:"veg",cal:350,protein:7.8,carbs:45.8,fat:15.1,note:"per piece"},
+    {name:"Mexican Aloo Wrap",cat:"Wraps",type:"veg",cal:365,protein:6,carbs:39,fat:20,note:"per wrap"},
+    {name:"Green Chilli Kabab Naan",cat:"Sides",type:"non-veg",cal:392,protein:15,carbs:41.8,fat:18.3,note:"per piece"},
+    {name:"Cheesy Rice Bowl",cat:"Meals",type:"veg",cal:573.79,protein:12.25,carbs:70.88,fat:26.81,note:"per bowl"},
+    {name:"Spicy Rice Bowl",cat:"Meals",type:"veg",cal:523.15,protein:11.73,carbs:79.14,fat:17.75,note:"per bowl"},
+    {name:"Cheesy Rice Bowl with Chicken Nuggets",cat:"Meals",type:"non-veg",cal:751.19,protein:23.54,carbs:82.34,fat:36.41,note:"per bowl"},
+    {name:"Spicy Rice Bowl with Chicken Nuggets",cat:"Meals",type:"non-veg",cal:700.54,protein:23.01,carbs:90.60,fat:27.34,note:"per bowl"},
+    {name:"Cheesy Rice Bowl with Chicken Strips",cat:"Meals",type:"non-veg",cal:699.02,protein:21.57,carbs:78.21,fat:33.32,note:"per bowl"},
+    {name:"Spicy Rice Bowl with Chicken Strips",cat:"Meals",type:"non-veg",cal:648.38,protein:21.04,carbs:86.47,fat:24.26,note:"per bowl"},
+    {name:"Regular Chocolate Milkshake",cat:"Beverages",type:"veg",cal:175,protein:4,carbs:30,fat:4,note:"regular serving"},
+    {name:"Medium Chocolate Milkshake",cat:"Beverages",type:"veg",cal:241,protein:6,carbs:42,fat:6,note:"medium serving"},
+    {name:"Large Chocolate Milkshake",cat:"Beverages",type:"veg",cal:349,protein:8,carbs:60,fat:8,note:"large serving"},
+    {name:"Coke Float",cat:"Beverages",type:"veg",cal:139,protein:2,carbs:29,fat:22,note:"per serving"},
+    {name:"Iced Tea",cat:"Beverages",type:"veg",cal:133,protein:0,carbs:33,fat:22,note:"per serving"},
+    {name:"Soft Serve Regular",cat:"Desserts",type:"veg",cal:127,protein:2,carbs:21,fat:22,note:"regular serving"},
+    {name:"McFlurry Choco Crunch Small",cat:"Desserts",type:"veg",cal:153,protein:3,carbs:23,fat:5,note:"small serving"},
+    {name:"McFlurry Choco Crunch Regular",cat:"Desserts",type:"veg",cal:336,protein:5,carbs:42,fat:16,note:"regular serving"},
+    {name:"Cappuccino",cat:"McCafe",type:"veg",cal:159,protein:8,carbs:15,fat:8,note:"355 ml serving"},
+    {name:"Latte",cat:"McCafe",type:"veg",cal:152,protein:8,carbs:12,fat:8,note:"355 ml serving"},
+    {name:"Mocha",cat:"McCafe",type:"veg",cal:209,protein:8,carbs:27,fat:8,note:"355 ml serving"},
+    {name:"Hot Chocolate",cat:"McCafe",type:"veg",cal:289,protein:8,carbs:48,fat:0,note:"355 ml serving"},
+    {name:"Chai Latte",cat:"McCafe",type:"veg",cal:243,protein:8,carbs:34,fat:8,note:"355 ml serving"},
+  ]},
+  { chain:"Burger King India", color:"#FF8732", items:[
+    {name:"Crispy Veg",cat:"Burgers",type:"veg",cal:426.7,protein:8.4,carbs:52.0,fat:20.6,note:"138 g portion"},
+    {name:"BK Veggie",cat:"Burgers",type:"veg",cal:398.2,protein:8.6,carbs:52.4,fat:17.2,note:"137 g portion"},
+    {name:"Veg Chilli Cheese",cat:"Burgers",type:"veg",cal:422.6,protein:11.6,carbs:50.6,fat:19.3,note:"149 g portion"},
+    {name:"Paneer King",cat:"Burgers",type:"veg",cal:525.8,protein:14.0,carbs:67.1,fat:22.4,note:"165 g portion"},
+    {name:"Veg Supreme",cat:"Burgers",type:"veg",cal:374.1,protein:11.5,carbs:49.2,fat:16.5,note:"147 g portion"},
+    {name:"Veg Whopper",cat:"Burgers",type:"veg",cal:749.0,protein:11.0,carbs:100.6,fat:31.4,note:"296 g portion"},
+    {name:"BK Grill",cat:"Burgers",type:"non-veg",cal:332.1,protein:15.3,carbs:36.7,fat:13.8,note:"118 g portion"},
+    {name:"Chicken Chilli Cheese",cat:"Burgers",type:"non-veg",cal:406.1,protein:16.8,carbs:47.9,fat:16.4,note:"155 g portion"},
+    {name:"Crispy Chicken",cat:"Burgers",type:"non-veg",cal:345.2,protein:12.4,carbs:39.0,fat:15.5,note:"116 g portion"},
+    {name:"Xtra Long Chicken",cat:"Burgers",type:"non-veg",cal:533.5,protein:23.4,carbs:61.1,fat:21.7,note:"211 g portion"},
+    {name:"Chicken Whopper",cat:"Burgers",type:"non-veg",cal:662.0,protein:33.2,carbs:60.3,fat:38.3,note:"287 g portion"},
+    {name:"Chicken Fries 5 pcs",cat:"Sides",type:"non-veg",cal:206.0,protein:10.9,carbs:19.9,fat:9.2,note:"65 g portion"},
+    {name:"Fiery Rings 4 pcs",cat:"Sides",type:"veg",cal:275.3,protein:7.0,carbs:36.0,fat:11.5,note:"80 g portion"},
+    {name:"Potato Tots",cat:"Sides",type:"veg",cal:179.4,protein:4.7,carbs:20.0,fat:9.0,note:"70 g portion"},
+    {name:"Fries Regular",cat:"Sides",type:"veg",cal:263.9,protein:4.4,carbs:37.7,fat:10.6,note:"74 g portion"},
+    {name:"Medium Fries",cat:"Sides",type:"veg",cal:406.6,protein:7.5,carbs:58.1,fat:6.8,note:"114 g portion"},
+    {name:"King Fries",cat:"Sides",type:"veg",cal:535.0,protein:9.9,carbs:76.5,fat:8.9,note:"150 g portion"},
+    {name:"Vanilla Softie",cat:"Desserts",type:"veg",cal:118.4,protein:1.9,carbs:20.2,fat:3.3,note:"90 g portion"},
+    {name:"Choco Dip Softie",cat:"Desserts",type:"veg",cal:253.4,protein:4.7,carbs:30.7,fat:12.8,note:"105 g portion"},
+    {name:"Chocolate Shake",cat:"Beverages",type:"veg",cal:414.2,protein:8.0,carbs:64.6,fat:14.0,note:"275 ml serving"},
+    {name:"Mango Shake",cat:"Beverages",type:"veg",cal:333.9,protein:5.4,carbs:53.4,fat:11.0,note:"275 ml serving"},
+    {name:"Strawberry Shake",cat:"Beverages",type:"veg",cal:434.8,protein:9.6,carbs:73.3,fat:11.5,note:"275 ml serving"},
+  ]},
+  { chain:"Subway India", color:"#009843", items:[
+    {name:'Aloo Patty 6"',cat:"Subs",type:"veg",cal:337,protein:12,carbs:58,fat:7,note:'6-inch sandwich; standard multigrain bread and vegetables'},
+    {name:'Chatpata Chana 6"',cat:"Subs",type:"veg",cal:320,protein:12,carbs:57,fat:5,note:'6-inch sandwich; standard multigrain bread and vegetables'},
+    {name:'Chicken Kofta 6"',cat:"Subs",type:"non-veg",cal:379,protein:17,carbs:54,fat:11,note:'6-inch sandwich; standard multigrain bread and vegetables'},
+    {name:'Chicken Slice 6"',cat:"Subs",type:"non-veg",cal:290,protein:18,carbs:47,fat:4,note:'6-inch sandwich; standard multigrain bread and vegetables'},
+    {name:'Chicken Teriyaki 6"',cat:"Subs",type:"non-veg",cal:311,protein:21,carbs:51,fat:3,note:'6-inch sandwich; standard multigrain bread and vegetables'},
+    {name:'Corn & Peas 6"',cat:"Subs",type:"veg",cal:359,protein:11,carbs:53,fat:12,note:'6-inch sandwich; standard multigrain bread and vegetables'},
+    {name:'Hara Bhara Kebab 6"',cat:"Subs",type:"veg",cal:391,protein:14,carbs:62,fat:11,note:'6-inch sandwich; standard multigrain bread and vegetables'},
+    {name:'Mexican Patty 6"',cat:"Subs",type:"veg",cal:379,protein:15,carbs:70,fat:10,note:'6-inch sandwich; standard multigrain bread and vegetables'},
+    {name:'Paneer Tikka 6"',cat:"Subs",type:"veg",cal:410,protein:16,carbs:50,fat:16,note:'6-inch sandwich; standard multigrain bread and vegetables'},
+    {name:'Peri Peri Chicken 6"',cat:"Subs",type:"non-veg",cal:312,protein:24,carbs:48,fat:3,note:'6-inch sandwich; standard multigrain bread and vegetables'},
+    {name:'Roasted Chicken Strips 6"',cat:"Subs",type:"non-veg",cal:301,protein:21,carbs:48,fat:3,note:'6-inch sandwich; standard multigrain bread and vegetables'},
+    {name:'Tandoori Chicken Tikka 6"',cat:"Subs",type:"non-veg",cal:341,protein:20,carbs:48,fat:8,note:'6-inch sandwich; standard multigrain bread and vegetables'},
+    {name:'Tandoori Tofu 6"',cat:"Subs",type:"veg",cal:356,protein:15,carbs:53,fat:9,note:'6-inch sandwich; standard multigrain bread and vegetables'},
+    {name:'Tuna 6"',cat:"Subs",type:"non-veg",cal:384,protein:18,carbs:48,fat:14,note:'6-inch sandwich; standard multigrain bread and vegetables'},
+    {name:'Veg Seekh 6"',cat:"Subs",type:"veg",cal:365,protein:15,carbs:60,fat:7,note:'6-inch sandwich; standard multigrain bread and vegetables'},
+    {name:'Veg Shammi Kebab 6"',cat:"Subs",type:"veg",cal:365,protein:15,carbs:63,fat:6,note:'6-inch sandwich; standard multigrain bread and vegetables'},
+  ]},
+  { chain:"Pizza Hut India", color:"#EE3124", items:[
+    {name:"Margherita Pizza Medium",cat:"Pizza",type:"veg",cal:1377.1,protein:60.7,carbs:193.0,fat:40.3,note:"whole medium pizza; 6 slices"},
+    {name:"Schezwan Margherita Pizza Medium",cat:"Pizza",type:"veg",cal:1412.4,protein:60.3,carbs:197.5,fat:42.4,note:"whole medium pizza; 6 slices"},
+    {name:"Corn n Cheese Pizza Medium",cat:"Pizza",type:"veg",cal:1677.4,protein:69.4,carbs:254.5,fat:42.4,note:"whole medium pizza; 6 slices"},
+    {name:"Veggie Feast Pizza Medium",cat:"Pizza",type:"veg",cal:1605.3,protein:69.8,carbs:238.3,fat:41.4,note:"whole medium pizza; 6 slices"},
+    {name:"Spiced Paneer Pizza Medium",cat:"Pizza",type:"veg",cal:1595.2,protein:84.8,carbs:185.9,fat:56.9,note:"whole medium pizza; 6 slices"},
+    {name:"Veggie Supreme Pizza Medium",cat:"Pizza",type:"veg",cal:1653.1,protein:68.8,carbs:214.7,fat:55.9,note:"whole medium pizza; 6 slices"},
+    {name:"Chicken Sausage Pizza Medium",cat:"Pizza",type:"non-veg",cal:1699.5,protein:69.0,carbs:187.7,fat:74.7,note:"whole medium pizza; 6 slices"},
+    {name:"Chicken Tikka Pizza Medium",cat:"Pizza",type:"non-veg",cal:1766.5,protein:78.6,carbs:216.8,fat:65.0,note:"whole medium pizza; 6 slices"},
+    {name:"Chicken Supreme Pizza Medium",cat:"Pizza",type:"non-veg",cal:1754.1,protein:94.1,carbs:186.6,fat:70.1,note:"whole medium pizza; 6 slices"},
+    {name:"Spicy Baked Chicken Wings 4 pc",cat:"Chicken Wings",type:"non-veg",cal:280.4,protein:28.2,carbs:13.5,fat:17.4,note:"148 g / 4 pieces"},
+    {name:"BBQ Wings 4 pc",cat:"Chicken Wings",type:"non-veg",cal:367.4,protein:34.5,carbs:18.4,fat:17.4,note:"178 g / 4 pieces"},
+    {name:"Classic Bread Stix",cat:"Garlic Bread",type:"veg",cal:517.0,protein:15.6,carbs:111.2,fat:2.2,note:"180 g serving"},
+    {name:"Loaded Bread Stix",cat:"Garlic Bread",type:"veg",cal:673.0,protein:16.4,carbs:113.2,fat:18.3,note:"210 g serving"},
+    {name:"Garlic Bread Cheese",cat:"Garlic Bread",type:"veg",cal:493.6,protein:10.4,carbs:54.8,fat:31.7,note:"136 g serving"},
+    {name:"Choco Volcano",cat:"Desserts",type:"veg",cal:261.7,protein:5.7,carbs:45.7,fat:12.8,note:"82 g / 1 piece"},
+  ]},
+];
+
+// Enrich
+const ALL = [];
+const cats = new Set();
+DATA.forEach(c => c.items.forEach(item => {
+  ALL.push({...item, chainName: c.chain, chainColor: c.color});
+  cats.add(item.cat);
+}));
+
+// Dropdowns
+const cf = document.getElementById('cf');
+DATA.forEach(c => { const o=document.createElement('option'); o.value=c.chain; o.textContent=c.chain; cf.appendChild(o); });
+const catf = document.getElementById('catf');
+[...cats].sort().forEach(cat => { const o=document.createElement('option'); o.value=cat; o.textContent=cat; catf.appendChild(o); });
+
+// State
+let col='name', dir=1, ftype='all', fchain='', fcat='', q='';
+
+// Sort icons
+const UP = (on) => `<svg width="8" height="5" viewBox="0 0 8 5"><path d="M4 0L8 5H0z" fill="${on?'var(--accent)':'currentColor'}" opacity="${on?1:.25}"/></svg>`;
+const DN = (on) => `<svg width="8" height="5" viewBox="0 0 8 5"><path d="M4 5L0 0H8z" fill="${on?'var(--accent)':'currentColor'}" opacity="${on?1:.25}"/></svg>`;
+
+function refreshIcons() {
+  ['name','chain','cal','protein','carbs','fat'].forEach(c => {
+    const el = document.getElementById('si-'+c);
+    if (!el) return;
+    const a = col===c;
+    el.innerHTML = UP(a && dir===1) + DN(a && dir===-1);
+    el.closest('th').classList.toggle('active', a);
+  });
+}
+
+function fmt(v) {
+  if (typeof v !== 'number') return 'â€”';
+  return Number.isInteger(v) ? String(v) : v.toFixed(1);
+}
+
+function render() {
+  const sq = q.toLowerCase().trim();
+  let rows = ALL.filter(item => {
+    if (ftype!=='all' && item.type!==ftype) return false;
+    if (fchain && item.chainName!==fchain) return false;
+    if (fcat && item.cat!==fcat) return false;
+    if (sq && !item.name.toLowerCase().includes(sq) && !item.chainName.toLowerCase().includes(sq) && !item.cat.toLowerCase().includes(sq)) return false;
+    return true;
+  });
+
+  rows.sort((a,b) => {
+    if (col==='name') return dir*a.name.localeCompare(b.name);
+    if (col==='chain') return dir*a.chainName.localeCompare(b.chainName);
+    const av = a[col] ?? -Infinity, bv = b[col] ?? -Infinity;
+    return dir*(av-bv);
+  });
+
+  document.getElementById('ss').textContent = rows.length;
+  document.getElementById('st').textContent = ALL.length;
+  document.getElementById('sc').textContent = DATA.length;
+
+  const tb = document.getElementById('tb');
+
+  if (!rows.length) {
+    tb.innerHTML = `<tr><td colspan="9" class="empty">No items match your filters.</td></tr>`;
+    refreshIcons(); return;
+  }
+
+  // Group headers when browsing (no search/chain/cat filter, name or chain sort)
+  const grouped = !sq && !fchain && !fcat && (col==='name' || col==='chain');
+  let html = '';
+
+  if (grouped) {
+    let order = DATA.map(c=>c.chain);
+    if (col==='chain') order = [...order].sort((a,b)=>dir*a.localeCompare(b));
+    order.forEach(chainName => {
+      const cr = rows.filter(r=>r.chainName===chainName);
+      if (!cr.length) return;
+      html += `<tr class="gr"><td colspan="9"><span class="gpip" style="background:${cr[0].chainColor}"></span>${chainName}<span style="opacity:.45;font-weight:400"> &nbsp;Â·&nbsp; ${cr.length} item${cr.length>1?'s':''}</span></td></tr>`;
+      cr.forEach(item => { html += row(item, false); });
+    });
+  } else {
+    rows.forEach(item => { html += row(item, true); });
+  }
+
+  tb.innerHTML = html;
+  refreshIcons();
+}
+
+function row(item, showChain) {
+  return `<tr>
+    <td><div class="vd ${item.type}" title="${item.type==='veg'?'Vegetarian':'Non-vegetarian'}"></div></td>
+    <td><div class="iname">${item.name}</div></td>
+    <td>${showChain ? `<div class="cc"><span class="cp" style="background:${item.chainColor}"></span><span class="cl">${item.chainName}</span></div>` : '<span style="color:var(--border)">â€”</span>'}</td>
+    <td><span class="catb">${item.cat}</span></td>
+    <td class="cal">${fmt(item.cal)}</td>
+    <td class="pro">${fmt(item.protein)}g</td>
+    <td class="crb">${fmt(item.carbs)}g</td>
+    <td class="fat">${fmt(item.fat)}g</td>
+    <td class="note">${item.note||''}</td>
+  </tr>`;
+}
+
+// Events
+document.querySelectorAll('th.sort').forEach(th => {
+  th.addEventListener('click', () => {
+    const c = th.dataset.c;
+    if (col===c) { dir*=-1; }
+    else { col=c; dir = (c==='name'||c==='chain') ? 1 : -1; }
+    render();
+  });
+});
+
+document.getElementById('search').addEventListener('input', e => { q=e.target.value; render(); });
+document.getElementById('cf').addEventListener('change', e => { fchain=e.target.value; render(); });
+document.getElementById('catf').addEventListener('change', e => { fcat=e.target.value; render(); });
+document.querySelectorAll('.pill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');
+    ftype=p.dataset.t; render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>
+
